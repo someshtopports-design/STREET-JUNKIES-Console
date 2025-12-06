@@ -6,9 +6,10 @@ interface InventoryProps {
   products: Product[];
   setProducts: (products: Product[]) => void;
   brands: Brand[];
+  logAction: (action: string, details: string) => void;
 }
 
-export const Inventory: React.FC<InventoryProps> = ({ products, setProducts, brands }) => {
+export const Inventory: React.FC<InventoryProps> = ({ products, setProducts, brands, logAction }) => {
   const [activeView, setActiveView] = useState<'add' | 'stock'>('add');
   const [selectedBrandFilter, setSelectedBrandFilter] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
@@ -110,6 +111,9 @@ export const Inventory: React.FC<InventoryProps> = ({ products, setProducts, bra
 
     setProducts([...products, newProduct]);
     setNewlyCreated(newProduct);
+    
+    logAction('Added Inventory', `Added ${formData.stock} units of ${formData.name} (${formData.size}) to ${brand?.name}`);
+
     // Reset form but keep Brand and Name/Category/Price for rapid entry of other sizes
     setFormData(prev => ({ 
         ...prev, 

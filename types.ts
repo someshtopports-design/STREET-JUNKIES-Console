@@ -58,3 +58,19 @@ export interface Notification {
   timestamp: string;
   read: boolean;
 }
+
+export interface AuditLog {
+  id: string;
+  action: string;
+  details: string;
+  user: string;
+  timestamp: string;
+}
+
+export interface StoreProfile {
+  name: string;
+  address: string;
+  phone: string;
+  email: string;
+  gst: string;
+}

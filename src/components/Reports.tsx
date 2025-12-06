@@ -83,7 +83,6 @@ export const Reports: React.FC<ReportsProps> = ({ sales, brands, storeProfile })
     setDraftingFor(stat.brand.id);
     setLoadingDraft(true);
     
-    // Determine date string for invoice
     let dateStr = new Date().toLocaleDateString();
     if (dateFilterType === 'month') {
         const [y, m] = selectedMonth.split('-');
@@ -102,6 +101,18 @@ export const Reports: React.FC<ReportsProps> = ({ sales, brands, storeProfile })
     );
     setEmailDraft(draft);
     setLoadingDraft(false);
+  };
+
+  const sendEmail = () => {
+      const brand = brands.find(b => b.id === draftingFor);
+      if (!brand) return;
+
+      const subject = `Invoice / Settlement Statement - ${brand.name}`;
+      const body = encodeURIComponent(emailDraft);
+      const recipient = brand.contactEmail;
+      
+      // Open default mail client
+      window.location.href = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${body}`;
   };
 
   const downloadFullReport = () => {
@@ -140,12 +151,12 @@ export const Reports: React.FC<ReportsProps> = ({ sales, brands, storeProfile })
 
   return (
     <div className="space-y-8 animate-in fade-in">
+      {/* Header and Filter sections remain similar, omitted for brevity, logic below */}
       <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-6">
         <div>
           <h1 className="text-3xl font-heading font-bold text-slate-900">Settlements</h1>
           <p className="text-slate-500 mt-1">Monthly payouts and automated brand reports.</p>
         </div>
-        
         <div className="flex flex-col md:flex-row gap-4 w-full xl:w-auto items-end">
              {/* Date Filters */}
              <div className="bg-white p-2 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-2">
@@ -158,7 +169,6 @@ export const Reports: React.FC<ReportsProps> = ({ sales, brands, storeProfile })
                      <option value="month">Monthly</option>
                      <option value="custom">Custom Range</option>
                  </select>
-
                  {dateFilterType === 'month' && (
                      <input 
                         type="month" 
@@ -167,7 +177,6 @@ export const Reports: React.FC<ReportsProps> = ({ sales, brands, storeProfile })
                         className="bg-slate-50 border border-slate-200 text-sm font-bold text-slate-700 py-2 px-3 rounded-lg outline-none"
                      />
                  )}
-
                  {dateFilterType === 'custom' && (
                      <div className="flex gap-2">
                         <input 
@@ -186,7 +195,6 @@ export const Reports: React.FC<ReportsProps> = ({ sales, brands, storeProfile })
                      </div>
                  )}
              </div>
-
              <div className="flex items-center gap-2 bg-white px-3 py-3 rounded-xl border border-slate-200 shadow-sm">
                <span className="text-xs text-slate-400 font-bold uppercase">Brand:</span>
                <select 
@@ -198,12 +206,7 @@ export const Reports: React.FC<ReportsProps> = ({ sales, brands, storeProfile })
                  {brands.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
                </select>
             </div>
-             <button 
-                onClick={downloadFullReport}
-                className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-emerald-600/20 active:scale-95"
-             >
-                <Table size={18} /> Export Excel
-             </button>
+             <button onClick={downloadFullReport} className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-emerald-600/20 active:scale-95"><Table size={18} /> Export Excel</button>
         </div>
       </div>
 
@@ -237,11 +240,7 @@ export const Reports: React.FC<ReportsProps> = ({ sales, brands, storeProfile })
                         <button 
                             onClick={() => handleDraftEmail(stat)}
                             disabled={stat.itemsSold === 0}
-                            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all font-medium text-xs ${
-                                stat.itemsSold === 0 
-                                ? 'bg-slate-100 text-slate-400 cursor-not-allowed' 
-                                : 'text-indigo-600 hover:text-white hover:bg-indigo-600 bg-indigo-50'
-                            }`}
+                            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all font-medium text-xs ${stat.itemsSold === 0 ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'text-indigo-600 hover:text-white hover:bg-indigo-600 bg-indigo-50'}`}
                         >
                             <Mail size={16} /> Draft Invoice
                         </button>
@@ -260,17 +259,13 @@ export const Reports: React.FC<ReportsProps> = ({ sales, brands, storeProfile })
                 <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95">
                     <div className="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
                         <div className="flex items-center gap-3">
-                            <div className="bg-indigo-100 p-2 rounded-lg text-indigo-600">
-                                <Mail size={20} />
-                            </div>
+                            <div className="bg-indigo-100 p-2 rounded-lg text-indigo-600"><Mail size={20} /></div>
                             <div>
                                 <h3 className="font-heading font-bold text-slate-900">System Invoice</h3>
                                 <p className="text-xs text-slate-500">AI Generated • {new Date().toLocaleDateString()}</p>
                             </div>
                         </div>
-                        <button onClick={() => setEmailDraft('')} className="p-2 hover:bg-slate-200 rounded-full transition-colors text-slate-500">
-                            <X size={20} />
-                        </button>
+                        <button onClick={() => setEmailDraft('')} className="p-2 hover:bg-slate-200 rounded-full transition-colors text-slate-500"><X size={20} /></button>
                     </div>
                     
                     <div className="flex-1 p-0 overflow-hidden relative">
@@ -284,10 +279,10 @@ export const Reports: React.FC<ReportsProps> = ({ sales, brands, storeProfile })
                     <div className="p-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
                         <button onClick={() => setEmailDraft('')} className="px-5 py-2.5 text-slate-600 hover:bg-slate-200 rounded-xl font-bold transition-colors">Discard</button>
                         <button 
-                            onClick={() => alert("Invoice sent to brand contact!")} 
+                            onClick={sendEmail} 
                             className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-indigo-200"
                         >
-                            <Send size={18} /> Send Invoice
+                            <Send size={18} /> Open in Mail App
                         </button>
                     </div>
                 </div>
@@ -295,7 +290,6 @@ export const Reports: React.FC<ReportsProps> = ({ sales, brands, storeProfile })
         )}
       </div>
       
-      {/* Loading Overlay */}
       {loadingDraft && (
           <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center animate-in fade-in">
               <div className="bg-white p-8 rounded-3xl shadow-2xl flex flex-col items-center">

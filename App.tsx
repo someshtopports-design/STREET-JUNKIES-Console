@@ -5,31 +5,61 @@ import { BrandOnboarding } from './components/BrandOnboarding';
 import { Inventory } from './components/Inventory';
 import { PointOfSale } from './components/PointOfSale';
 import { Reports } from './components/Reports';
-import { INITIAL_BRANDS, INITIAL_PRODUCTS, INITIAL_SALES } from './constants';
-import { Brand, Product, Sale } from './types';
+import { Login } from './components/Login';
+import { ActivityLog } from './components/ActivityLog';
+import { Settings } from './components/Settings';
+import { INITIAL_BRANDS, INITIAL_PRODUCTS, INITIAL_SALES, DEFAULT_STORE_PROFILE } from './constants';
+import { Brand, Product, Sale, AuditLog, StoreProfile } from './types';
 import { Menu } from 'lucide-react';
 
 const App: React.FC = () => {
+  // Auth State
+  const [currentUser, setCurrentUser] = useState<string | null>(null);
+
+  // App State
   const [currentTab, setCurrentTab] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   
-  // Global State (Mock Database)
+  // Data State
   const [brands, setBrands] = useState<Brand[]>(INITIAL_BRANDS);
   const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
   const [sales, setSales] = useState<Sale[]>(INITIAL_SALES);
+  const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
+  const [storeProfile, setStoreProfile] = useState<StoreProfile>(DEFAULT_STORE_PROFILE);
+
+  // Helper to log actions
+  const logAction = (action: string, details: string) => {
+    if (!currentUser) return;
+    const newLog: AuditLog = {
+      id: `log${Date.now()}`,
+      action,
+      details,
+      user: currentUser,
+      timestamp: new Date().toISOString()
+    };
+    setAuditLogs(prev => [...prev, newLog]);
+  };
+
+  if (!currentUser) {
+    return <Login onLogin={setCurrentUser} />;
+  }
 
   const renderContent = () => {
     switch (currentTab) {
       case 'dashboard':
         return <Dashboard products={products} sales={sales} brands={brands} />;
       case 'brands':
-        return <BrandOnboarding brands={brands} setBrands={setBrands} />;
+        return <BrandOnboarding brands={brands} setBrands={setBrands} logAction={logAction} />;
       case 'inventory':
-        return <Inventory products={products} setProducts={setProducts} brands={brands} />;
+        return <Inventory products={products} setProducts={setProducts} brands={brands} logAction={logAction} />;
       case 'pos':
-        return <PointOfSale products={products} setProducts={setProducts} brands={brands} sales={sales} setSales={setSales} />;
+        return <PointOfSale products={products} setProducts={setProducts} brands={brands} sales={sales} setSales={setSales} logAction={logAction} />;
       case 'reports':
-        return <Reports sales={sales} brands={brands} />;
+        return <Reports sales={sales} brands={brands} storeProfile={storeProfile} />;
+      case 'logs':
+        return <ActivityLog logs={auditLogs} />;
+      case 'settings':
+        return <Settings profile={storeProfile} setProfile={setStoreProfile} logAction={logAction} />;
       default:
         return <Dashboard products={products} sales={sales} brands={brands} />;
     }
@@ -42,6 +72,8 @@ const App: React.FC = () => {
         setCurrentTab={setCurrentTab} 
         isOpen={sidebarOpen}
         setIsOpen={setSidebarOpen}
+        onLogout={() => setCurrentUser(null)}
+        currentUser={currentUser}
       />
       
       <main className="flex-1 flex flex-col h-screen overflow-hidden relative">

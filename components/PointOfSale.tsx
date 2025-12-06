@@ -8,9 +8,10 @@ interface PointOfSaleProps {
   brands: Brand[];
   sales: Sale[];
   setSales: (sales: Sale[]) => void;
+  logAction: (action: string, details: string) => void;
 }
 
-export const PointOfSale: React.FC<PointOfSaleProps> = ({ products, setProducts, brands, sales, setSales }) => {
+export const PointOfSale: React.FC<PointOfSaleProps> = ({ products, setProducts, brands, sales, setSales, logAction }) => {
   const [view, setView] = useState<'scan' | 'review'>('scan');
   const [skuInput, setSkuInput] = useState('');
   const [cart, setCart] = useState<SaleItem[]>([]);
@@ -141,6 +142,7 @@ export const PointOfSale: React.FC<PointOfSaleProps> = ({ products, setProducts,
     const totalAmount = cart.reduce((acc, item) => acc + (item.sellingPrice * item.quantity), 0);
     const totalCommission = cart.reduce((acc, item) => acc + item.commission, 0);
     const totalBrandRevenue = cart.reduce((acc, item) => acc + item.brandRevenue, 0);
+    const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
 
     const newSale: Sale = {
       id: `s${Date.now()}`,
@@ -164,6 +166,9 @@ export const PointOfSale: React.FC<PointOfSaleProps> = ({ products, setProducts,
 
     setProducts(updatedProducts);
     setSales([...sales, newSale]);
+    
+    logAction('Recorded Sale', `Sale ID: ${newSale.id} | Amount: ₹${totalAmount} | Items: ${totalItems}`);
+
     setCart([]);
     setCustomerDetails({ name: '', phone: '', address: '' });
     setView('scan');

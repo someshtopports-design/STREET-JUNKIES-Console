@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { Brand, BrandType } from '../types';
-import { Plus, Building2, Mail, Phone, Percent } from 'lucide-react';
+import { Plus, Building2, Mail, Phone, Percent, Trash2, Edit2, X, Check } from 'lucide-react';
 
 interface BrandOnboardingProps {
   brands: Brand[];
   setBrands: (brands: Brand[]) => void;
+  logAction: (action: string, details: string) => void;
 }
 
-export const BrandOnboarding: React.FC<BrandOnboardingProps> = ({ brands, setBrands }) => {
-  const [isAdding, setIsAdding] = useState(false);
+export const BrandOnboarding: React.FC<BrandOnboardingProps> = ({ brands, setBrands, logAction }) => {
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -25,19 +28,57 @@ export const BrandOnboarding: React.FC<BrandOnboardingProps> = ({ brands, setBra
     });
   };
 
+  const startEdit = (brand: Brand) => {
+    setFormData({
+      name: brand.name,
+      email: brand.contactEmail,
+      phone: brand.contactPhone,
+      type: brand.type,
+      commissionRate: brand.commissionRate
+    });
+    setEditingId(brand.id);
+    setIsFormOpen(true);
+  };
+
+  const handleDelete = (id: string, name: string) => {
+    if (window.confirm(`Are you sure you want to permanently delete ${name}? This cannot be undone.`)) {
+      setBrands(brands.filter(b => b.id !== id));
+      logAction('Deleted Brand', `Deleted brand: ${name} (ID: ${id})`);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const newBrand: Brand = {
-      id: `b${Date.now()}`,
-      name: formData.name,
-      contactEmail: formData.email,
-      contactPhone: formData.phone,
-      type: formData.type,
-      commissionRate: Number(formData.commissionRate),
-      joinedAt: new Date().toISOString(),
-    };
-    setBrands([...brands, newBrand]);
-    setIsAdding(false);
+    
+    if (editingId) {
+      // Update Existing
+      const updatedBrands = brands.map(b => b.id === editingId ? {
+        ...b,
+        name: formData.name,
+        contactEmail: formData.email,
+        contactPhone: formData.phone,
+        type: formData.type,
+        commissionRate: Number(formData.commissionRate),
+      } : b);
+      setBrands(updatedBrands);
+      logAction('Updated Brand', `Updated details for brand: ${formData.name}`);
+    } else {
+      // Create New
+      const newBrand: Brand = {
+        id: `b${Date.now()}`,
+        name: formData.name,
+        contactEmail: formData.email,
+        contactPhone: formData.phone,
+        type: formData.type,
+        commissionRate: Number(formData.commissionRate),
+        joinedAt: new Date().toISOString(),
+      };
+      setBrands([...brands, newBrand]);
+      logAction('Onboarded Brand', `Added new brand: ${formData.name}`);
+    }
+
+    setIsFormOpen(false);
+    setEditingId(null);
     setFormData({ name: '', email: '', phone: '', type: BrandType.EXCLUSIVE, commissionRate: 15 });
   };
 
@@ -49,16 +90,22 @@ export const BrandOnboarding: React.FC<BrandOnboardingProps> = ({ brands, setBra
           <p className="text-slate-500 mt-1">Manage relationships and commission structures.</p>
         </div>
         <button
-          onClick={() => setIsAdding(!isAdding)}
+          onClick={() => {
+            setEditingId(null);
+            setFormData({ name: '', email: '', phone: '', type: BrandType.EXCLUSIVE, commissionRate: 15 });
+            setIsFormOpen(!isFormOpen);
+          }}
           className="bg-slate-900 hover:bg-slate-800 text-white px-6 py-3 rounded-xl flex items-center justify-center gap-2 font-bold transition-all shadow-lg shadow-slate-900/20 active:scale-95"
         >
-          {isAdding ? 'Cancel' : <><Plus size={20} /> Onboard Brand</>}
+          {isFormOpen ? 'Cancel' : <><Plus size={20} /> Onboard Brand</>}
         </button>
       </div>
 
-      {isAdding && (
+      {isFormOpen && (
         <div className="bg-white p-8 rounded-3xl shadow-xl border border-slate-100 animate-in slide-in-from-top-4 duration-300">
-          <h2 className="text-xl font-heading font-bold mb-6 text-slate-900 border-b border-slate-100 pb-4">New Partner Details</h2>
+          <h2 className="text-xl font-heading font-bold mb-6 text-slate-900 border-b border-slate-100 pb-4">
+            {editingId ? 'Edit Partner Details' : 'New Partner Details'}
+          </h2>
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-6">
                 <div className="space-y-2">
@@ -137,9 +184,10 @@ export const BrandOnboarding: React.FC<BrandOnboardingProps> = ({ brands, setBra
             <div className="md:col-span-2 flex justify-end pt-4">
               <button
                 type="submit"
-                className="w-full md:w-auto bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-emerald-200"
+                className="w-full md:w-auto bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-emerald-200 flex items-center justify-center gap-2"
               >
-                Save Partner
+                {editingId ? <Check size={20} /> : <Plus size={20} />}
+                {editingId ? 'Update Partner' : 'Save Partner'}
               </button>
             </div>
           </form>
@@ -148,7 +196,26 @@ export const BrandOnboarding: React.FC<BrandOnboardingProps> = ({ brands, setBra
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {brands.map(brand => (
-          <div key={brand.id} className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+          <div key={brand.id} className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group relative">
+            
+            {/* Action Buttons */}
+            <div className="absolute top-6 right-6 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button 
+                    onClick={() => startEdit(brand)}
+                    className="p-2 bg-white border border-slate-200 text-indigo-600 rounded-full hover:bg-indigo-50 transition-colors shadow-sm"
+                    title="Edit Brand"
+                >
+                    <Edit2 size={16} />
+                </button>
+                <button 
+                    onClick={() => handleDelete(brand.id, brand.name)}
+                    className="p-2 bg-white border border-slate-200 text-red-500 rounded-full hover:bg-red-50 transition-colors shadow-sm"
+                    title="Delete Brand"
+                >
+                    <Trash2 size={16} />
+                </button>
+            </div>
+
             <div className="flex justify-between items-start mb-6">
               <div className="p-4 bg-slate-50 rounded-2xl text-slate-700 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
                 <Building2 size={28} strokeWidth={1.5} />
@@ -184,6 +251,13 @@ export const BrandOnboarding: React.FC<BrandOnboardingProps> = ({ brands, setBra
             </div>
           </div>
         ))}
+        {brands.length === 0 && !isFormOpen && (
+             <div className="col-span-full py-16 text-center text-slate-400 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
+                <Building2 size={48} className="mx-auto mb-4 opacity-50" />
+                <p className="font-medium">No brands onboarded yet.</p>
+                <button onClick={() => setIsFormOpen(true)} className="text-indigo-600 font-bold hover:underline mt-2">Add your first brand</button>
+             </div>
+        )}
       </div>
     </div>
   );
