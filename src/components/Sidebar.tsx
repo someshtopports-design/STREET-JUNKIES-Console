@@ -1,20 +1,24 @@
 import React from 'react';
-import { LayoutDashboard, ShoppingBag, Users, ShoppingCart, FileText, X, LogOut, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, Users, ShoppingCart, FileText, X, LogOut, ChevronRight, Settings, History } from 'lucide-react';
 
 interface SidebarProps {
   currentTab: string;
   setCurrentTab: (tab: string) => void;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  onLogout: () => void;
+  currentUser: string;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ currentTab, setCurrentTab, isOpen, setIsOpen }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ currentTab, setCurrentTab, isOpen, setIsOpen, onLogout, currentUser }) => {
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'pos', label: 'Point of Sale', icon: ShoppingCart },
     { id: 'inventory', label: 'Inventory', icon: ShoppingBag },
     { id: 'brands', label: 'Brands', icon: Users },
     { id: 'reports', label: 'Reports', icon: FileText },
+    { id: 'logs', label: 'Activity Logs', icon: History },
+    { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
   return (
@@ -43,7 +47,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, setCurrentTab, isO
             </div>
             <div className="flex flex-col">
               <span className="font-heading font-bold text-lg tracking-tight leading-none text-white">StreetJunkies</span>
-              <span className="text-[10px] font-medium text-slate-500 uppercase tracking-widest mt-1">Retail OS v2.0</span>
+              <span className="text-[10px] font-medium text-slate-500 uppercase tracking-widest mt-1">Retail OS v2.1</span>
             </div>
           </div>
           <button onClick={() => setIsOpen(false)} className="lg:hidden text-slate-500 hover:text-white transition-colors">
@@ -82,17 +86,22 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, setCurrentTab, isO
 
         {/* User Footer */}
         <div className="p-4 border-t border-slate-900">
-          <div className="bg-slate-900/50 rounded-2xl p-4 flex items-center gap-3 hover:bg-slate-900 transition-colors cursor-pointer border border-slate-800/50">
+          <button 
+            onClick={onLogout}
+            className="w-full bg-slate-900/50 rounded-2xl p-4 flex items-center gap-3 hover:bg-slate-900 transition-colors cursor-pointer border border-slate-800/50 text-left group"
+          >
             <div className="relative">
-              <img src="https://picsum.photos/100/100" alt="User" className="w-10 h-10 rounded-full border-2 border-slate-800" />
+              <div className="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center font-bold text-white border-2 border-slate-800">
+                 {currentUser.charAt(0).toUpperCase()}
+              </div>
               <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-slate-900 rounded-full"></span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-heading font-semibold text-white truncate">Store Admin</p>
-              <p className="text-xs text-slate-500 truncate">manager@streetjunkies.com</p>
+              <p className="text-sm font-heading font-semibold text-white truncate">{currentUser}</p>
+              <p className="text-xs text-slate-500 truncate">Store Staff</p>
             </div>
-            <LogOut size={18} className="text-slate-600 hover:text-red-400 transition-colors" />
-          </div>
+            <LogOut size={18} className="text-slate-600 group-hover:text-red-400 transition-colors" />
+          </button>
         </div>
       </div>
     </>

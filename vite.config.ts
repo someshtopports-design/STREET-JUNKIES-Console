@@ -1,8 +1,9 @@
-import path from 'path';
-import { defineConfig, loadEnv } from 'vite';
-import react from '@vitejs/plugin-react';
+import { defineConfig, loadEnv } from 'vite'
+import react from '@vitejs/plugin-react'
 
+// https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
+<<<<<<< HEAD
   const env = loadEnv(mode, '.', '');
   return {
     server: {
@@ -27,3 +28,15 @@ export default defineConfig(({ mode }) => {
     logLevel: 'info',
   };
 });
+=======
+  // Load env file based on `mode` in the current working directory.
+  // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
+  const env = loadEnv(mode, '.', '');
+  return {
+    plugins: [react()],
+    define: {
+      'process.env': env
+    }
+  }
+})
+>>>>>>> 04f0fd73baa47f62bd07cc7dc0628b06b7022b7f
