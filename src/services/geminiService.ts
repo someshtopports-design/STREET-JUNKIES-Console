@@ -1,18 +1,15 @@
 import { GoogleGenAI } from "@google/genai";
 import { Product, Sale, Brand, SaleItem, StoreProfile } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const ai = new GoogleGenAI({ apiKey: (process as any).env.API_KEY });
 
 export const generateDashboardInsights = async (
   products: Product[],
   sales: Sale[],
   brands: Brand[]
 ): Promise<string> => {
-<<<<<<< HEAD
-  if (!process.env.API_KEY) return "API Key not configured. Unable to generate AI insights.";
+  if (!(process as any).env.API_KEY) return "API Key not configured. Unable to generate AI insights.";
 
-=======
->>>>>>> 04f0fd73baa47f62bd07cc7dc0628b06b7022b7f
   const lowStockItems = products.filter(p => p.stock < 10).map(p => `${p.name} (${p.brandId}) - Stock: ${p.stock}`);
   const salesSummary = sales.slice(-10).map(s => `Total: $${s.totalAmount}`).join(", ");
   const topBrands = brands.map(b => b.name).join(", ");
@@ -30,7 +27,7 @@ export const generateDashboardInsights = async (
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-2.0-flash',
       contents: prompt,
     });
     return response.text || "No insights generated.";
@@ -50,10 +47,7 @@ export const generateSettlementEmail = async (
   commissionRate: number,
   storeProfile: StoreProfile
 ): Promise<string> => {
-<<<<<<< HEAD
-  if (!process.env.API_KEY) return "API Key missing.";
-=======
->>>>>>> 04f0fd73baa47f62bd07cc7dc0628b06b7022b7f
+  if (!(process as any).env.API_KEY) return "API Key missing.";
 
   // Prepare item data for the model to group
   const itemsData = items.map(i => `Product: ${i.productName} - ${i.size} | Qty: ${i.quantity} | Price: ${i.sellingPrice}`).join('\n');
@@ -127,7 +121,7 @@ export const generateSettlementEmail = async (
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-2.0-flash',
       contents: prompt,
     });
     return response.text || "Draft generation failed.";
@@ -135,8 +129,4 @@ export const generateSettlementEmail = async (
     console.error("Gemini Error:", error);
     return "Error generating invoice draft.";
   }
-<<<<<<< HEAD
 };
-=======
-};
->>>>>>> 04f0fd73baa47f62bd07cc7dc0628b06b7022b7f

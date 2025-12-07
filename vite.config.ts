@@ -3,8 +3,7 @@ import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-<<<<<<< HEAD
-  const env = loadEnv(mode, '.', '');
+  const env = loadEnv(mode, process.cwd(), '');
   return {
     server: {
       port: 3000,
@@ -13,30 +12,14 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     define: {
       'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
-    },
-    resolve: {
-      alias: {
-        '@': path.resolve(__dirname, '.'),
-      }
+      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+      // Fallback for other process.env usage
+      'process.env': env
     },
     build: {
-      minify: false,
-      sourcemap: true,
-      emptyOutDir: false,
-    },
-    logLevel: 'info',
+      outDir: 'dist',
+      minify: true,
+      sourcemap: false
+    }
   };
 });
-=======
-  // Load env file based on `mode` in the current working directory.
-  // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
-  const env = loadEnv(mode, '.', '');
-  return {
-    plugins: [react()],
-    define: {
-      'process.env': env
-    }
-  }
-})
->>>>>>> 04f0fd73baa47f62bd07cc7dc0628b06b7022b7f

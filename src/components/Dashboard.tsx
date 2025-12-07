@@ -69,7 +69,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ products, sales, brands })
 
       {/* KPI Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-<<<<<<< HEAD
         <KPICard
           title="Total Revenue"
           value={`₹${totalRevenue.toLocaleString()}`}
@@ -96,34 +95,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ products, sales, brands })
           title="Low Stock"
           value={lowStockCount}
           icon={AlertTriangle}
-=======
-        <KPICard 
-          title="Total Revenue" 
-          value={`₹${totalRevenue.toLocaleString()}`} 
-          icon={IndianRupee} 
-          bgClass="bg-emerald-50" 
-          colorClass="text-emerald-600"
-          trend={true}
-        />
-        <KPICard 
-          title="Items Sold" 
-          value={totalItemsSold} 
-          icon={TrendingUp} 
-          bgClass="bg-blue-50" 
-          colorClass="text-blue-600"
-        />
-        <KPICard 
-          title="Active Brands" 
-          value={brands.length} 
-          icon={Package} 
-          bgClass="bg-violet-50" 
-          colorClass="text-violet-600"
-        />
-        <KPICard 
-          title="Low Stock" 
-          value={lowStockCount} 
-          icon={AlertTriangle} 
->>>>>>> 04f0fd73baa47f62bd07cc7dc0628b06b7022b7f
           bgClass={lowStockCount > 0 ? "bg-amber-50" : "bg-slate-50"}
           colorClass={lowStockCount > 0 ? "text-amber-600" : "text-slate-400"}
         />
@@ -142,7 +113,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ products, sales, brands })
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={salesByBrand}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-<<<<<<< HEAD
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748B', fontSize: 12 }} dy={10} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748B', fontSize: 12 }} tickFormatter={(value) => `₹${value}`} dx={-10} />
                 <Tooltip
@@ -151,44 +121,22 @@ export const Dashboard: React.FC<DashboardProps> = ({ products, sales, brands })
                     backgroundColor: '#1e293b',
                     borderRadius: '12px',
                     border: 'none',
-=======
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748B', fontSize: 12}} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748B', fontSize: 12}} tickFormatter={(value) => `₹${value}`} dx={-10} />
-                <Tooltip 
-                  cursor={{fill: '#f8fafc'}}
-                  contentStyle={{ 
-                    backgroundColor: '#1e293b', 
-                    borderRadius: '12px', 
-                    border: 'none', 
->>>>>>> 04f0fd73baa47f62bd07cc7dc0628b06b7022b7f
                     color: '#fff',
                     boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)'
                   }}
                   itemStyle={{ color: '#fff' }}
                   labelStyle={{ color: '#94a3b8', marginBottom: '0.25rem' }}
                 />
-<<<<<<< HEAD
                 <Bar
                   dataKey="sales"
                   fill="url(#colorGradient)"
                   radius={[6, 6, 0, 0]}
-=======
-                <Bar 
-                  dataKey="sales" 
-                  fill="url(#colorGradient)" 
-                  radius={[6, 6, 0, 0]} 
->>>>>>> 04f0fd73baa47f62bd07cc7dc0628b06b7022b7f
                   barSize={48}
                 />
                 <defs>
                   <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
-<<<<<<< HEAD
                     <stop offset="0%" stopColor="#4f46e5" stopOpacity={1} />
                     <stop offset="100%" stopColor="#818cf8" stopOpacity={0.8} />
-=======
-                    <stop offset="0%" stopColor="#4f46e5" stopOpacity={1}/>
-                    <stop offset="100%" stopColor="#818cf8" stopOpacity={0.8}/>
->>>>>>> 04f0fd73baa47f62bd07cc7dc0628b06b7022b7f
                   </linearGradient>
                 </defs>
               </BarChart>
@@ -199,15 +147,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ products, sales, brands })
         {/* AI Insight Section - Cyberpunk/Premium Look */}
         <div className="bg-slate-900 p-1 rounded-3xl shadow-2xl shadow-indigo-500/10">
           <div className="bg-gradient-to-b from-slate-800 to-slate-900 rounded-[22px] p-6 h-full flex flex-col relative overflow-hidden border border-slate-700/50">
-<<<<<<< HEAD
             {/* Abstract Background */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-[80px] -mr-16 -mt-16 pointer-events-none"></div>
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/10 rounded-full blur-[80px] -ml-16 -mb-16 pointer-events-none"></div>
-=======
-             {/* Abstract Background */}
-             <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-[80px] -mr-16 -mt-16 pointer-events-none"></div>
-             <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/10 rounded-full blur-[80px] -ml-16 -mb-16 pointer-events-none"></div>
->>>>>>> 04f0fd73baa47f62bd07cc7dc0628b06b7022b7f
 
             <div className="relative z-10 flex-1 flex flex-col">
               <div className="flex items-center gap-3 mb-6">
@@ -219,11 +161,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ products, sales, brands })
                   <p className="text-xs text-indigo-300">Powered by Gemini AI</p>
                 </div>
               </div>
-<<<<<<< HEAD
 
-=======
-              
->>>>>>> 04f0fd73baa47f62bd07cc7dc0628b06b7022b7f
               <div className="flex-1 bg-slate-950/50 rounded-xl p-5 mb-6 border border-slate-800 backdrop-blur-md overflow-y-auto max-h-[300px]">
                 {insight ? (
                   <div className="text-slate-200 text-sm leading-relaxed whitespace-pre-line font-medium">
