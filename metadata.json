@@ -1,0 +1,7 @@
+{
+  "name": "Street Junkies Console",
+  "description": "Multi-brand inventory and sales management system.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
