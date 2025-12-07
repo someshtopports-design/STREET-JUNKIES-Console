@@ -8,8 +8,6 @@ export const generateDashboardInsights = async (
   sales: Sale[],
   brands: Brand[]
 ): Promise<string> => {
-  if (!process.env.API_KEY) return "API Key not configured. Unable to generate AI insights.";
-
   const lowStockItems = products.filter(p => p.stock < 10).map(p => `${p.name} (${p.brandId}) - Stock: ${p.stock}`);
   const salesSummary = sales.slice(-10).map(s => `Total: $${s.totalAmount}`).join(", ");
   const topBrands = brands.map(b => b.name).join(", ");
@@ -47,7 +45,6 @@ export const generateSettlementEmail = async (
   commissionRate: number,
   storeProfile: StoreProfile
 ): Promise<string> => {
-  if (!process.env.API_KEY) return "API Key missing.";
 
   // Prepare item data for the model to group
   const itemsData = items.map(i => `Product: ${i.productName} - ${i.size} | Qty: ${i.quantity} | Price: ${i.sellingPrice}`).join('\n');
